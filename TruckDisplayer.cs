@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FoodTrucksApp
+namespace GeorgetownFoodTruckBot
 {
     class TruckDisplayer
     {
@@ -17,7 +17,6 @@ namespace FoodTrucksApp
         {
             FoodTrucks.AddRange(foodtruckList);
             GetGeorgetownFoodTrucks();
-            PrintGeorgetownFoodTrucks();
         }
 
         public void GetGeorgetownFoodTrucks()
@@ -29,7 +28,6 @@ namespace FoodTrucksApp
                     {
                         if(ft.MondayLocation == "Georgetown")
                             TrucksInGeorgetown.Add(ft);
-                        
                     }
                     break;
 

@@ -8,7 +8,8 @@ using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Canvas.Parser;
 using System.IO;
 using System.Text.RegularExpressions;
-namespace FoodTrucksApp
+
+namespace GeorgetownFoodTruckBot
 {
     class DataCleaner
     {
@@ -130,11 +131,11 @@ namespace FoodTrucksApp
                 var foodTruckBusinessName = GetBusinessName(DividedText[x]).Groups[2].ToString();
                 try
                 {
-                    if (foodTruckBusinessName.Contains("L'Enfant Plaza") || foodTruckBusinessName.Contains("Virginia Ave (State Dept)"))
+                    /*if (foodTruckBusinessName.Contains("L'Enfant Plaza") || foodTruckBusinessName.Contains("Virginia Ave (State Dept)"))
                     {
                         Console.WriteLine("L'Enfant or Virginia Ave found. This is a test");
                         Console.WriteLine("The corresponding site permit number: {0}" + Environment.NewLine, FoodTruckList[x].SitePermit);
-                    }
+                    }*/
                     FoodTruckList[x].BusinessName = foodTruckBusinessName;
                 }
                 catch(NullReferenceException ex)
@@ -143,6 +144,7 @@ namespace FoodTrucksApp
                 }
             }
         }
+
 
         protected Match GetDailyLocations(string lineOfText)
         {
@@ -179,13 +181,14 @@ namespace FoodTrucksApp
 
                 var fridayLocation = GetDailyLocations(DividedText[x]).NextMatch().ToString();
                 FoodTruckList[x].FridayLocation = fridayLocation;
-
             }
         }
+
+
         
 
         // Test functions
-        protected void PrintFoodTruckSiteNumberTESTFUNCTION()
+        /*protected void PrintFoodTruckSiteNumberTESTFUNCTION()
         {
             foreach(var ft in FoodTruckList)
             {
@@ -208,6 +211,6 @@ namespace FoodTrucksApp
             {
                 Console.WriteLine($"{ft.SitePermit}  {ft.BusinessName}  {ft.MondayLocation}  {ft.TuesdayLocation}   {ft.WednesdayLocation}  {ft.ThursdayLocation}   {ft.FridayLocation}");
             }
-        }
+        }*/
     }
 }

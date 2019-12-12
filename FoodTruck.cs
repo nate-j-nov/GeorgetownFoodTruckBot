@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FoodTrucksApp
+namespace GeorgetownFoodTruckBot
 {
     class FoodTruck
     {

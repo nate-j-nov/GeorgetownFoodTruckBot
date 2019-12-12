@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using iText;
@@ -8,8 +8,7 @@ using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Canvas.Parser;
 using System.IO;
 using System.Text.RegularExpressions;
-
-namespace GeorgetownFoodTruckBot
+namespace FoodTrucksApp
 {
     class DataCleaner
     {
@@ -17,7 +16,7 @@ namespace GeorgetownFoodTruckBot
         public string TotalText { get; set; }
         public List<string> DividedText = new List<string>();
         public List<FoodTruck> FoodTruckList = new List<FoodTruck>();
-        private string _patternSiteNumber = @"VSP-\d{5}";                                                                                                             
+        private string _patternSiteNumber = @"VSP-\d{5}";
         private string _patternBusinessName = @"(VSP-\d{5})(.*?)(Noma|OFF|Patriots Plaza|Georgetown|Virginia Ave \(State Dept\)|Union Station|Farragut Square 17th St|L\WEnfant Plaza|Waterfront Metro|Navy Yard/Capital River Front|Metro Center|Franklin Square)";
 
         //Constructors
@@ -29,6 +28,7 @@ namespace GeorgetownFoodTruckBot
             SetSitePermitNumber();
             SetBusinessName();
             SetDailyLocations();
+            PrintSNNameAndLocations();
         }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace GeorgetownFoodTruckBot
         {
             string[] tempDividedText = TotalText.Split(new[] { "\n" }, StringSplitOptions.None);
             string patternIfMultipleLines = @"VSP-\d{5}\s+(Noma|OFF|Patriots Plaza|Georgetown|Virginia Ave \(State Dept\)|Union Station|Farragut Square 17th St|L\WEnfant Plaza|Waterfront Metro|Navy Yard/Capital River Front|Metro Center|Franklin Square)";
-            
-            for (int x = 0; x < tempDividedText.Length; x++) 
+
+            for (int x = 0; x < tempDividedText.Length; x++)
             {
                 //Console.WriteLine(tempDividedText[x]);
                 Match matchSitePermitNumber = Regex.Match(tempDividedText[x], _patternSiteNumber);
@@ -73,7 +73,7 @@ namespace GeorgetownFoodTruckBot
 
         protected void PrintDividedText()
         {
-            foreach(var s in DividedText)
+            foreach (var s in DividedText)
             {
                 Console.WriteLine(s);
             }
@@ -82,7 +82,7 @@ namespace GeorgetownFoodTruckBot
         protected Match GetSitePermitNumber(string lineOfText)
         {
             Match sitePermitNumber = Regex.Match(lineOfText.Replace(" ", String.Empty), _patternSiteNumber);
-            if(sitePermitNumber.Success)
+            if (sitePermitNumber.Success)
             {
                 return sitePermitNumber;
             }
@@ -95,10 +95,10 @@ namespace GeorgetownFoodTruckBot
         // Turn Get and Set Permit number into one method. 
         protected void SetSitePermitNumber()
         {
-            foreach(var t in DividedText)
+            foreach (var t in DividedText)
             {
                 var sitePermitNumber = GetSitePermitNumber(t);
-                if(sitePermitNumber != null)
+                if (sitePermitNumber != null)
                 {
                     FoodTruckList.Add(new FoodTruck(sitePermitNumber.ToString()));
                 }
@@ -110,7 +110,7 @@ namespace GeorgetownFoodTruckBot
         // on stack overflow somewhere and shouldn't take terribly long to figure out. once I get it.Maybe I shouldn't be doing the lineOftext.Repalce(" ", String.Empty) but keep playing. 
         // This shouldn't be terribly difficult to figure out
         protected Match GetBusinessName(string lineOfText)
-        {                        
+        {
             var businessName = Regex.Match(lineOfText, _patternBusinessName);
             if (businessName.Success)
             {
@@ -131,27 +131,26 @@ namespace GeorgetownFoodTruckBot
                 var foodTruckBusinessName = GetBusinessName(DividedText[x]).Groups[2].ToString();
                 try
                 {
-                    /*if (foodTruckBusinessName.Contains("L'Enfant Plaza") || foodTruckBusinessName.Contains("Virginia Ave (State Dept)"))
+                    if (foodTruckBusinessName.Contains("L'Enfant Plaza") || foodTruckBusinessName.Contains("Virginia Ave (State Dept)"))
                     {
                         Console.WriteLine("L'Enfant or Virginia Ave found. This is a test");
                         Console.WriteLine("The corresponding site permit number: {0}" + Environment.NewLine, FoodTruckList[x].SitePermit);
-                    }*/
+                    }
                     FoodTruckList[x].BusinessName = foodTruckBusinessName;
                 }
-                catch(NullReferenceException ex)
+                catch (NullReferenceException ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
             }
         }
 
-
-        protected Match GetDailyLocations(string lineOfText)
+        /*protected Match GetDailyLocations(string lineOfText)
         {
-            string dailyLocationPattern = @"Noma|OFF|Patriots Plaza|Georgetown|Virginia Ave \(State Dept\)|Union Station|Farragut Square 17th St|L\WEnfant Plaza|Waterfront Metro+|Navy Yard/Capital River Front|Metro Center|Franklin Square";
+            string dailyLocationPattern = @"Noma|OFF|Patriots Plaza|Georgetown|Virginia Ave \(State Dept\)|Union Station|Farragut Square 17th St|L\WEnfant Plaza|Waterfront Metro|Navy Yard/Capital River Front|Metro Center|Franklin Square";
             var dailyLocation = Regex.Match(lineOfText, dailyLocationPattern);
             if (dailyLocation.Success)
-            { 
+            {
                 return dailyLocation;
             }
             else
@@ -159,38 +158,41 @@ namespace GeorgetownFoodTruckBot
                 Console.WriteLine("No match found.");
                 return null;
             }
-        }
+        }*/
 
         protected void SetDailyLocations()
         {
+
+            string dailyLocationPattern = @"Noma|OFF|Patriots Plaza|Georgetown|Virginia Ave \(State Dept\)|Union Station|Farragut Square 17th St|L\WEnfant Plaza|Waterfront Metro|Navy Yard/Capital River Front|Metro Center|Franklin Square";
+            //var dailyLocation = Regex.Match(lineOfText, dailyLocationPattern);
             for (int x = 0; x < DividedText.Count; x++)
             {
+
                 // Sets Monday's location
-                var mondayLocation = GetDailyLocations(DividedText[x]).ToString();
-                FoodTruckList[x].MondayLocation = mondayLocation;
+                var mondayLocation = Regex.Match(DividedText[x], dailyLocationPattern);
+                FoodTruckList[x].MondayLocation = mondayLocation.ToString();
 
                 // Set Tuesday's Locations
-                var tuesdayLocation = GetDailyLocations(DividedText[x]).NextMatch().ToString();
-                FoodTruckList[x].TuesdayLocation = tuesdayLocation;
+                var tuesdayLocation = mondayLocation.NextMatch();
+                FoodTruckList[x].TuesdayLocation = tuesdayLocation.ToString();
 
-                var wednesdayLocation = GetDailyLocations(DividedText[x]).NextMatch().ToString();
-                FoodTruckList[x].WednesdayLocation = wednesdayLocation;
+                //Etc...
+                var wednesdayLocation = tuesdayLocation.NextMatch();
+                FoodTruckList[x].WednesdayLocation = wednesdayLocation.ToString();
 
-                var thursdayLocation = GetDailyLocations(DividedText[x]).NextMatch().ToString();
-                FoodTruckList[x].ThursdayLocation = thursdayLocation;
+                var thursdayLocation = wednesdayLocation.NextMatch();
+                FoodTruckList[x].ThursdayLocation = thursdayLocation.ToString();
 
-                var fridayLocation = GetDailyLocations(DividedText[x]).NextMatch().ToString();
-                FoodTruckList[x].FridayLocation = fridayLocation;
+                var fridayLocation = thursdayLocation.NextMatch();
+                FoodTruckList[x].FridayLocation = fridayLocation.ToString();
+
             }
         }
 
-
-        
-
         // Test functions
-        /*protected void PrintFoodTruckSiteNumberTESTFUNCTION()
+        protected void PrintFoodTruckSiteNumberTESTFUNCTION()
         {
-            foreach(var ft in FoodTruckList)
+            foreach (var ft in FoodTruckList)
             {
                 Console.WriteLine(ft.SitePermit.ToString());
             }
@@ -199,7 +201,7 @@ namespace GeorgetownFoodTruckBot
         protected void PrintFoodTruckSNAndNameTESTFUNCTION()
         {
             Console.WriteLine("Site Permit Business Name");
-            foreach(var ft in FoodTruckList)
+            foreach (var ft in FoodTruckList)
             {
                 Console.WriteLine($"{ft.SitePermit}  {ft.BusinessName}");
             }
@@ -211,6 +213,6 @@ namespace GeorgetownFoodTruckBot
             {
                 Console.WriteLine($"{ft.SitePermit}  {ft.BusinessName}  {ft.MondayLocation}  {ft.TuesdayLocation}   {ft.WednesdayLocation}  {ft.ThursdayLocation}   {ft.FridayLocation}");
             }
-        }*/
+        }
     }
 }

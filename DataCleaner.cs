@@ -105,10 +105,6 @@ namespace FoodTrucksApp
             }
         }
 
-        // Turn get and set business name into one method.
-        // This regex isn't working. It may be useful to do the substring type analysis with stuff like substringStart and substringEnd and getting the stuff in the middle. I think it's
-        // on stack overflow somewhere and shouldn't take terribly long to figure out. once I get it.Maybe I shouldn't be doing the lineOftext.Repalce(" ", String.Empty) but keep playing. 
-        // This shouldn't be terribly difficult to figure out
         protected Match GetBusinessName(string lineOfText)
         {
             var businessName = Regex.Match(lineOfText, _patternBusinessName);
@@ -145,20 +141,6 @@ namespace FoodTrucksApp
             }
         }
 
-        /*protected Match GetDailyLocations(string lineOfText)
-        {
-            string dailyLocationPattern = @"Noma|OFF|Patriots Plaza|Georgetown|Virginia Ave \(State Dept\)|Union Station|Farragut Square 17th St|L\WEnfant Plaza|Waterfront Metro|Navy Yard/Capital River Front|Metro Center|Franklin Square";
-            var dailyLocation = Regex.Match(lineOfText, dailyLocationPattern);
-            if (dailyLocation.Success)
-            {
-                return dailyLocation;
-            }
-            else
-            {
-                Console.WriteLine("No match found.");
-                return null;
-            }
-        }*/
 
         protected void SetDailyLocations()
         {
